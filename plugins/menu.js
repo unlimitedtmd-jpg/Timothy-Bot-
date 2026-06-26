@@ -40,7 +40,7 @@ cmd({
         const seconds = Math.floor(uptime % 60);
 
         let menuText = `╭──────────────────────◇\n`;
-        menuText += `│  *🤖 DIANA XMD — MENU*\n`;
+        menuText += `│  *🤖 TIMNASA TMD — MENU*\n`;
         menuText += `│──────────────────────\n`;
         menuText += `│ 👤 User: ${m.pushName || 'User'}\n`;
         menuText += `│ ⚡ Prefix: [ ${config.PREFIX} ]\n`;
@@ -69,7 +69,7 @@ cmd({
             menuText += `╰────────────────────◇\n\n`;
         }
 
-        menuText += `> *© Powered by DIANA TECH*`;
+        menuText += `> *©ᴘᴏᴡᴇʀ ʙʏ ᴛɪᴍɴᴀsᴀ ᴛɪᴍᴏᴛʜʏ ʙᴏᴛ 🤖*`;
 
         await conn.sendMessage(from, {
             image: { url: config.IMAGE_PATH },
