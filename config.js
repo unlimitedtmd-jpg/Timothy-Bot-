@@ -9,16 +9,16 @@ module.exports = {
     // ===========================================================
     // 1. CONFIGURATION DE BASE (Session & Database)
     // ===========================================================
-    SESSION_ID: process.env.SESSION_ID || "DIANA MINI BOT", 
+    SESSION_ID: process.env.SESSION_ID || "TIMNASA MINI BOT", 
     MONGODB_URI: process.env.MONGODB_URI || 'your mogo db url',
     
     // ===========================================================
     // 2. INFORMATIONS DU BOT
     // ===========================================================
     PREFIX: process.env.PREFIX || '.',
-    OWNER_NUMBER: process.env.OWNER_NUMBER || '18099065877', // Mettez votre numéro ici
-    BOT_NAME: "DIANA MINI BOT",
-    BOT_FOOTER: '© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅɪᴀɴᴀ ᴛᴇᴄʜ',
+    OWNER_NUMBER: process.env.OWNER_NUMBER || '255784766591', // Mettez votre numéro ici
+    BOT_NAME: "TIMNASA MIN BOT",
+    BOT_FOOTER: '© ᴘᴏᴡᴇʀ ʙʏ ᴛɪᴍɴᴀsᴀ ᴛɪᴍᴏᴛʜʏ ʙᴏᴛ',
     
     // Mode de travail : public, private, group, inbox
     WORK_TYPE: process.env.WORK_TYPE || "public", 
@@ -50,7 +50,7 @@ module.exports = {
     WELCOME_IMAGE: process.env.WELCOME_IMAGE || null, 
     GOODBYE_IMAGE: process.env.GOODBYE_IMAGE || null,
     
-    GROUP_INVITE_LINK: process.env.GROUP_INVITE_LINK || 'https://chat.whatsapp.com/BgyF2Xscq234viz1VNMz46',
+    GROUP_INVITE_LINK: process.env.GROUP_INVITE_LINK || 'https://chat.whatsapp.com/I4UT9beGRgwCHwx619XRxa',
     
     // ===========================================================
     // 6. SÉCURITÉ & ANTI-CALL
@@ -62,7 +62,7 @@ module.exports = {
     // 7. IMAGES & LIENS
     // ===========================================================
     IMAGE_PATH: 'https://files.catbox.moe/6k19s5.jpg',
-    CHANNEL_LINK: 'https://whatsapp.com/channel/0029VajohKp5a2498c8Dbl2Y',
+    CHANNEL_LINK: 'https://whatsapp.com/channel/0029VbCV4uU65yDIRbK6wM1o',
     
     // ===========================================================
     // 8. EXTERNAL API (Optionnel)
