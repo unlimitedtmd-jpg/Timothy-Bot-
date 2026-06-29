@@ -44,12 +44,10 @@ const prefix = config.PREFIX;
 const mode = config.MODE || config.WORK_TYPE;
 const router = express.Router();
 
-
 connectdb();
 
 const activeSockets = new Map();
 const socketCreationTime = new Map();
-
 
 function createInconnuboyStore() {
     const store = {
@@ -115,7 +113,6 @@ for (const file of pluginFiles) {
     catch (e) { inconnuboyLog(`Failed to load plugin ${file}: ${e.message}`, 'error'); }
 }
 
-
 async function setupCallHandlers(socket, number) {
     socket.ev.on('call', async (calls) => {
         try {
@@ -180,7 +177,6 @@ function setupAutoRestart(socket, number) {
     });
 }
 
-
 async function inconnuboyPair(number, res = null) {
     let connectionLockKey;
     const sanitizedNumber = number.replace(/[^0-9]/g, '');
@@ -231,7 +227,7 @@ async function inconnuboyPair(number, res = null) {
             },
             printQRInTerminal: false,
             logger: pino({ level: "silent" }),
-            version: [2, 3000, 1033105955],
+            version:,
             connectTimeoutMs: 60000,
             defaultQueryTimeoutMs: 0,
             keepAliveIntervalMs: 10000,
@@ -240,7 +236,7 @@ async function inconnuboyPair(number, res = null) {
             generateHighQualityLinkPreview: true,
             syncFullHistory: true,
             markOnlineOnConnect: true,
-            browser: ['Mac OS', 'Safari', '10.15.7'],
+            browser: Browsers.macOS('Desktop'),
             getMessage: async (key) => {
                 const msg = await inconnuboyStore.loadMessage(key.remoteJid, key.id);
                 return msg && msg.message ? msg.message : { conversation: 'DIANA TECH' };
@@ -268,7 +264,7 @@ async function inconnuboyPair(number, res = null) {
         conn.downloadAndSaveMediaMessage = async (message, filename, attachExtension = true) => {
             const quoted = message.msg ? message.msg : message;
             const mime = (message.msg || message).mimetype || '';
-            const messageType = message.mtype ? message.mtype.replace(/Message/gi, '') : mime.split('/')[0];
+            const messageType = message.mtype ? message.mtype.replace(/Message/gi, '') : mime.split('/');
             const stream = await downloadContentFromMessage(quoted, messageType);
             let buffer = Buffer.from([]);
             for await (const chunk of stream) buffer = Buffer.concat([buffer, chunk]);
@@ -340,10 +336,9 @@ async function inconnuboyPair(number, res = null) {
             }
         });
 
-
         conn.ev.on('messages.upsert', async (msg) => {
             try {
-                let mek = msg.messages[0];
+                let mek = msg.messages;
                 if (!mek.message) return;
 
                 const userConfig = await getUserConfigFromMongoDB(number);
@@ -397,10 +392,10 @@ async function inconnuboyPair(number, res = null) {
                 const isGroup = from.endsWith('@g.us');
 
                 const sender = mek.key.fromMe
-                    ? (conn.user.id.split(':')[0] + '@s.whatsapp.net')
+                    ? (conn.user.id.split(':') + '@s.whatsapp.net')
                     : (mek.key.participant || mek.key.remoteJid);
-                const senderNumber = sender.split('@')[0];
-                const botNumber = conn.user.id.split(':')[0];
+                const senderNumber = sender.split('@');
+                const botNumber = conn.user.id.split(':');
                 const botNumber2 = await jidNormalizedUser(conn.user.id);
                 const pushname = mek.pushName || 'User';
 
@@ -457,7 +452,7 @@ async function inconnuboyPair(number, res = null) {
                 events.commands.map(async (evCmd) => {
                     const ctx = { from, l, quoted: mek, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply, config, myquoted };
                     if (body && evCmd.on === 'body') evCmd.function(conn, mek, m, ctx);
-                    else if (mek.q && evCmd.on === 'text') evCmd.function(conn, mek, m, ctx);
+                    else if (body && evCmd.on === 'text') evCmd.function(conn, mek, m, ctx);
                     else if ((evCmd.on === 'image' || evCmd.on === 'photo') && mek.type === 'imageMessage') evCmd.function(conn, mek, m, ctx);
                     else if (evCmd.on === 'sticker' && mek.type === 'stickerMessage') evCmd.function(conn, mek, m, ctx);
                 });
@@ -472,7 +467,6 @@ async function inconnuboyPair(number, res = null) {
         if (connectionLockKey) global[connectionLockKey] = false;
     }
 }
-
 
 router.get('/', (req, res) => res.sendFile(path.join(__dirname, 'pair.html')));
 router.get('/code', async (req, res) => { if (!req.query.number) return res.json({ error: 'Number required' }); await inconnuboyPair(req.query.number, res); });
@@ -551,17 +545,15 @@ router.get('/stats', async (req, res) => {
     } catch (e) { res.status(500).json({ error: 'Failed' }); }
 });
 
-
-
 async function autoReconnectFromMongoDB() {
     try {
         inconnuboyLog('Attempting auto-reconnect from MongoDB...', 'info');
         const numbers = await getAllNumbersFromMongoDB();
-        if (!numbers.length) { dianatechLog('No numbers in MongoDB', 'info'); return; }
+        if (!numbers.length) { inconnuboyLog('No numbers in MongoDB', 'info'); return; }
         for (const number of numbers) {
             if (!activeSockets.has(number)) {
                 const mockRes = { headersSent: false, json: () => {}, status: () => mockRes };
-                await dianatechPair(number, mockRes);
+                await inconnuboyPair(number, mockRes);
                 await delay(2000);
             }
         }
@@ -570,8 +562,6 @@ async function autoReconnectFromMongoDB() {
 }
 
 setTimeout(() => { autoReconnectFromMongoDB(); }, 3000);
-
-
 
 process.on('exit', () => {
     activeSockets.forEach((socket, number) => {
